@@ -11,7 +11,7 @@ Enable Sid's repositories in `/etc/apt/sources.list`
 ``` md
 # You may have something like this
 deb http://deb.debian.org/debian/ unstable main contrib non-free
-deb-src http://deb.debian.org/debian/ unstable main contrib non-free
+#deb-src http://deb.debian.org/debian/ unstable main contrib non-free
 ```
 
 Create a file in `etc/apt/apt.conf.d/` and name `99local`, then add the lines bellow:
@@ -22,6 +22,27 @@ Create a file in `etc/apt/apt.conf.d/` and name `99local`, then add the lines be
 # You could use any other text editor.
 APT::Install-Suggests "0";
 APT::Install-Recommends "0";
+```
+
+## Network Manager
+``` md
+# Install Network Manager to  start using wifi
+apt install network-manager network-manager-gnome
+
+# Restart system service
+systemctl restart NetworkManager.service
+```
+
+### Enable Interface Management
+
+Modify `/etc/NetworkManager/NetworkManager.conf`
+
+``` md
+# Set true in:
+managed=false
+
+# Then restart the system service
+systemctl NetworkManager restart
 ```
 
 ## Dependencies
@@ -70,66 +91,6 @@ apt install policykit-1-gnome
 apt install gnome-keyring-pkcs11
 ```
 
-## Network Manager
-``` md
-# Install Network Manager to  start using wifi
-apt install network-manager network-manager-gnome
-
-# Restart system service
-systemctl restart NetworkManager.service
-```
-
-### Wifi Driver
-> Make sure you have enable nonfree.
-
-#### iwlwifi
-> Make sure you installed the correct drive, in case you didn't read [documentation](https://wiki.debian.org/iwlwifi) or search your driver in GitHub/GitLab and compile it.
-```
-sudo apt install firmware-iwlwifi
-sudo modprobe -r iwlwifi ; sudo modprobe iwlwifi
-sudo systemctl restart NetworkManager.service
-```
-
-#### Broadcom wl
-``` md
-# Install dkms driver
-apt install linux-image-$(uname -r|sed 's,[^-]*-[^-]*-,,') linux-headers-$(uname -r|sed 's,[^-]*-[^-]*-,,') broadcom-sta-dkms
-apt install -f
-dpkg-reconfigure broadcom-sta-dkms
-
-# Unload conflict  modules
-sudo modprobe -r b44 b43 b43legacy ssb brcmsmac bcma
-
-# Load the module
-modprobed wl
-```
-
-#### Realtek
-> There are many Realtek driver, if your firmware isn't in that package, search it on the 
-web and comile it
-
-**Examples:**
-- [RTL8822ce-dkms](https://github.com/juanro49/rtl88x2ce-dkms)
-- [RTL88](https://github.com/lwfinger/rtw88)
-- [rtkbt (bluetooth driver)](https://github.com/radxa/rtkbt)
-- [rtl8723au bt (bluetooth drivers)](https://github.com/lwfinger/rtl8723au_bt)
-
-``` md
-# Install realtek's firmware
-apt install firmware-realtek
-```
-
-### Enable Interface Management
-
-Modify `/etc/NetworkManager/NetworkManager.conf`
-> nano /etc/NetworkManager/NetworkManager.conf
-``` md
-# Set true in:
-managed=false
-
-# Then restart the system service
-systemctl NetworkManager restart
-```
 ## Bluetooth
 ```md
 #  Dependencies
@@ -153,25 +114,6 @@ systemctl enable bluetooth
 systemctl start bluetooth
 ```
 
-## CUPS
-
-```
-sudo apt install cups system-config-printer printer-driver-cups-pdf
-sudo systemctl enable cups.service --now
-```
-
-> Por this is necessary to investigate about your printe model, in this case I use an Epson L575 so for this kind of printers you have to:
-
-### All Printer Driver
-```
-sudo apt install printer-driver-all
-```
-
-### Epson
-```
-sudo apt install printer-driver-escpr
-```
-
 ## Programs
 The next packages is a "basic kit" for start using the Desktop Enviroment
 
@@ -186,8 +128,10 @@ apt install gnome-terminal
 ```
 ### Filemanager
 ``` md
-# This install nautilus and images thumbnail.
-apt install nautilus 
+# Filemanager
+apt install nautilus
+
+# Showcase thumbnails
 apt gnome-sumdi 
 apt libgdk-pixbuf2.0-bin 
 apt libpixman-1-0
