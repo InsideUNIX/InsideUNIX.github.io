@@ -5,7 +5,7 @@ Next steps were taken from [debian's documentation](https://wiki.debian.org/Wire
 2. Make sure you know your wifi/bluetooth chipset. If don't, [see this explanation](https://www.cyberciti.biz/faq/linux-list-network-cards-command/)
 
 ## iwlwifi
-```
+``` md
 apt install firmware-iwlwifi
 modprobe -r iwlwifi ; sudo modprobe iwlwifi
 ```
