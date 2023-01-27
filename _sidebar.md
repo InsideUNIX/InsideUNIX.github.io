@@ -1,7 +1,8 @@
 `Current categories`
 
-- [Partitions guides](content/partitions/main.md)
-- [GNOME on Debian](content/debian/guidances/gnome.md)
-- [Flatpak on Debian](content/debian/guidances/flatpak.md)
-- [Building a custom kernel Debian](content/debian/guidances/custom_kernel.md)
-
+- [Partitions](content/partitions/main.md)
+- Debian
+   - [Gnome](content/debian/guidances/gnome.md)
+   - [Flatpak](content/debian/guidances/flatpak.md)
+   - [Wireless](content/debian/guidances/wireless.md)
+   - [Custom kernel](content/debian/guidances/custom_kernel.md)
