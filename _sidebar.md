@@ -1,6 +1,8 @@
 `Current categories`
 
 - [Partitions](content/partitions/main.md)
+- Arch
+   - [sbctl](content/arch/sbctl-arch.md)
 - Debian
    - [Gnome](content/debian/guidances/gnome.md)
    - [Flatpak](content/debian/guidances/flatpak.md)
