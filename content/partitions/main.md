@@ -5,6 +5,9 @@ This section is about custom way to partition your storage made by InsideUnix's 
 - **HBlanqueto**
   -  [btrfs + xfs](/content/partitions/hblanqueto/btrfs.md)
 
+- **xposedrelay**
+  -  [LVM, LUKS and systemd-boo](/content/partitions/xposedrelay/install-arch.md)
+
 # How to contribuite
 Want to add your guide?
 
