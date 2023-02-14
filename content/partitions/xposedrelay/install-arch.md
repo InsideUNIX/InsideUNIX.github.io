@@ -130,7 +130,10 @@ Nineth, add a hostname in the following file:
 ```
 Now, update `/etc/host` with your hostname:
 > `navi` is my hostname, replace `navi` with your hostname:
-![image](https://raw.githubusercontent.com/xposedrelay/kitty.conf/main/Screenshot%20from%202023-02-10%2018-53-14.png)
+```sh
+127.0.1.1 `navi`.localdomain `navi`
+```
+
 Eleventh, we have to edit `/etc/mkinitcpio.conf`. Without this, you can´t boot into your system:
 ```sh
 HOOKS=(base systemd btrfs keyboard autodetect sd-vconsole modconf block sd-encrypt lvm2 filesystems fsck)
@@ -153,7 +156,7 @@ timeout 3
 #console-mode keep
 editor 0
 ```
-Next, make an entry for your system in `/etc/loader/entries/arch.conf`
+Next, make an entry for your system in `/boot/loader/entries/arch.conf`
 > This time, I'll choose `intel-ucode.img` because I use an Intel cpu.
 > To know your `UUID`, use the tool `blkid`. (Example: `blkid /dev/sdaY`)
 ```sh
@@ -167,7 +170,7 @@ options rd.luks.name={UUID}=cryptlvm root=/dev/volume/root rd.luks.options=disca
 ## Complete
 Before we finish, you'll like to install a few things:
 ```sh
-pacman -Syu network-manager sudo zstd
+pacman -Syu network-manager sudo
 ```
 Later, set a password for your root user with:
 ```sh
@@ -187,3 +190,4 @@ exit
 umount -R /mnt
 ## reboot
 reboot
+```
