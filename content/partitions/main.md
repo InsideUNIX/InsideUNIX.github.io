@@ -3,7 +3,7 @@
 This section is about custom way to partition your storage made by InsideUnix's members. Feel free to use any guide you want, the point of this guidances is to apply them on any GNU/Linux's distribution that you want to manually install like Arch Linux, Debian (debootstrap), Void Linux... and others.
 
 - **HBlanqueto**
-  -  [btrfs + xfs](/content/partitions/hblanqueto/btrfs.md)
+  -  [btrfs + xfs](/content/partitions/hblanqueto/xbtrfs.md)
 
 - **xposedrelay**
   -  [LVM, LUKS and systemd-boot](/content/partitions/xposedrelay/install-arch.md)
