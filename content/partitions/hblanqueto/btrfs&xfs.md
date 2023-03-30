@@ -26,38 +26,26 @@ mkfs.btrfs /dev/sdaZ
 ## Creating subvolumes
 ```
 mount /dev/sdaZ /mnt
-btrfs su cr /mnt/@system
-btrfs su cr /mnt/@home
-
-btrfs su cr /mnt/@pkg
-btrfs su cr /mnt/@flatpak
-btrfs su cr /mnt/@logs
+btrfs su cr /mnt/@root
+btrfs su cr /mnt/@var
 ```
 
 ## Mounting top-level partitions
 ```
 # Mount @root subvolume.
-mount -o noatime,compress=zstd,space_cache=v2,subvol=@system /dev/sdaY /mnt
+mount -o noatime,compress=zstd,space_cache=v2,subvol=@root /dev/sdaY /mnt
 
-# Create systems folders.
+# Create systems folders. We will use /var & /home
 mkdir -p /mnt/{home,boot,var}
 
-mkdir /var/lib
-mkdir /var/lib/flatpak
+# Mount @var subvolume
+mount -o nodatacow,subvol=@var /dev/sdaZ /mnt/var
+```
 
-mkdir /var/logs
-
-mkdir /var/cache
-mkdir /var/cache/pacman
-mkdir /var/cache/pacman/pkg
-
-# Mount @root subvolume.
-mount -o noatime,compress=zstd,space_cache=v2,subvol=@home /dev/sdaY /mnt/home
-
-# Mount /var subvolume
-mount -o noatime,compress=zstd,space_cache=v2,subvol=@pkg /dev/sdaY /mnt/var/cache/pacman/pkg
-mount -o noatime,compress=zstd,space_cache=v2,subvol=@flatpak /dev/sdaY /mnt/lib/flatpak
-mount -o noatime,compress=zstd,space_cache=v2,subvol=@logs /dev/sdaY /mnt/logs
+## Mounting home partition
+```
+# Just execute:
+mount /dev/sdaY /mnt/home
 ```
 
 ## Mount EFI partition
@@ -73,5 +61,4 @@ mount /dev/sdaX /mnt/boot/efi
 Depending on your GNU/Linux distribution, continue with your system installation, configuring the system from `chroot`, installing requiered packages. Read the corresponding wiki in order to continue.
 
 **Other ways to partition**
-- [BTRFS+XFS by HBlanqueto](/content/partitions/hblanqueto-guidances/btrfs&xfs.md)
 - [ZFS by HBlanqueto](/content/partitions/hblanqueto-guidances/zfs.md)
