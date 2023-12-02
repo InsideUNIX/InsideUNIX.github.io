@@ -2,9 +2,10 @@
 Today, I'll show you how to install **Arch Linux** with [systemd-boot](https://wiki.archlinux.org/title/systemd-boot) (a boot loader), [LUKS](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup) (Linux Unified Key Setup) and [LVM](https://es.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)) (Logical Volume Manager)
 
 ## Before we continue, you will need:
+- A **UEFI** compatible computer.
 - A *USB* with *4GB* or more of space.
 - *WiFi* or *Ethernet* connection (*Ethernet* is prefered).
-- A *SSD* or *HDD* where you can install **Arch Linux**.
+- A *SSD* or *HDD* where you can install *Arch Linux*.
 
 With all of this, we can start!
 
@@ -28,16 +29,16 @@ timedatectl set-ntp true
 
 ### Partition
   - *512MB* or more for **ESP**
-  - *75GB* to *100GB* for **/***
+  - *75GB* to *100GB* for **/**
   - The *rest* of the drive use it for **/home**
 
 ### Formating
 > Use `lsblk` in order to know your drives, I'll use a generic letter for each partition: "X, Y and Z".
 
 - EFI
-    ```sh
-    mkfs.vfat /dev/sdaX
-    ```
+  ```sh
+  mkfs.vfat /dev/sdaX
+  ```
 
 ### Encryption
 
@@ -73,35 +74,41 @@ lvcreate -l 100%FREE volume -n home
 Eighth, format with a file system of your preference on logical partitions:
 > In this example, I'll some of the comands from the 'partition' guide.
 ```sh
-mkfs.btrfs /dev/volume/root
-mkfs.xfs -m rmapbt=1 /dev/volume/home
+mkfs.btrfs /dev/volume/root -L "root"
+mkfs.xfs -m rmapbt=1 -m bigtime=1 /dev/volume/home -L "Arch Linux"
 ```
 Nineth, mount the following volumes and file systems:
+### root
   ```sh
-## root
   mount /dev/volume/root /mnt
+  ```
+### home
+```sh
   mkdir /mnt/home
-  mkdir /mnt/boot
-## home  
   mount /dev/volume/home /mnt/home
-## ESP
+```
+### ESP
+  ```sh
+  mkdir /mnt/boot
   mount /dev/sdaX /mnt/boot
   ```
 ## Installation: part 2
 Install the essential packages:
-> This time, I'll use `nano`, you can use `vim` if you want.
+> `*progs` packages are used for fs compatibility.
+
+> Here, you can install your preferred text editor, like `nano` or `vim`
 ```sh
-pacstrap /mnt base base-devel linux linux-firmware lvm2 nano vim xfsprogs exfatprogs btrfs-progs zstd
+pacstrap /mnt base base-devel linux linux-firmware lvm2 xfsprogs exfatprogs btrfs-progs zstd
 ```
 Generate the `fstab`:
 ```sh
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
-Now, we `chroot`into system:
+Now, we `chroot` into system:
 ```sh
 arch-chroot /mnt
 ```
-Later, set the time locale:
+Then, set the time locale:
 > For this, I'll use my time locale.
 ```sh
 ln -sf /usr/share/zoneinfo/America/Argentina/Mendoza /etc/localtime
@@ -111,8 +118,17 @@ Then, set clock:
 hwclock --systohc
 ```
 After that, uncomment the localization you need in `/etc/locale.gen` and run the following command:
-> I'll use `es.AR.UTF-8` in my case.
-![image](https://raw.githubusercontent.com/xposedrelay/kitty.conf/main/image.png)
+> I'll use `en_US.UTF-8` in my case.
+
+> Example:
+```sh
+#en_SG.UTF-8 UTF-8  
+#en_SG ISO-8859-1  
+en_US.UTF-8 UTF-8  
+#en_US ISO-8859-1  
+#en_ZA.UTF-8 UTF-8 
+```
+Now, you have to enter this command:
 ```sh
 locale-gen
 ```
@@ -122,7 +138,7 @@ locale > /etc/locale.conf
 ```
 Eighth, set the language variable in previous file:
 ```sh
-LANG=es.AR.UTF-8
+LANG="en_US.UTF-8"
 ```
 Nineth, add a hostname in the following file:
 ```sh
@@ -131,7 +147,7 @@ Nineth, add a hostname in the following file:
 Now, update `/etc/host` with your hostname:
 > `navi` is my hostname, replace `navi` with your hostname:
 ```sh
-127.0.1.1 `navi`.localdomain `navi`
+127.0.1.1 `navi`
 ```
 
 Eleventh, we have to edit `/etc/mkinitcpio.conf`. Without this, you can´t boot into your system:
@@ -143,12 +159,15 @@ Twelfth, generate the initramfs:
 mkinitcpio -p linux
 ```
 Thirteenth, install systemd-boot:
+> ```systemd-boot``` is only compatible with UEFI systems.
 ```sh
-bootctl --path=/boot/ install
+bootctl install
 ```
 Fourteenth, we need to configure the bootloader. Edit `/boot/loader/loader.conf`:
 > `default`: lets you choose your default entrie conf.
+
 > `timeout`: as it says, timeout before selecting your default entrie.
+
 > `editor`: makes your config unchangeable at boot. 
 ```sh
 default arch
@@ -158,6 +177,7 @@ editor 0
 ```
 Next, make an entry for your system in `/boot/loader/entries/arch.conf`
 > This time, I'll choose `intel-ucode.img` because I use an Intel cpu.
+
 > To know your `UUID`, use the tool `blkid`. (Example: `blkid /dev/sdaY`)
 ```sh
 title Arch Linux
@@ -170,7 +190,7 @@ options rd.luks.name={UUID}=cryptlvm root=/dev/volume/root rd.luks.options=disca
 ## Complete
 Before we finish, you'll like to install a few things:
 ```sh
-pacman -Syu network-manager sudo
+pacman -Syu networkmanager sudo
 ```
 Later, set a password for your root user with:
 ```sh

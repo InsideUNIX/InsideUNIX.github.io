@@ -18,6 +18,12 @@ Third, create the keys:
 sudo sbctl create-keys
 ```
 Fourth, enroll the keys:
+> `-m`, `--microsoft` Enroll UEFI vendor certificates from Microsoft into the signature database. (From `man sbctl`)
+
+> Note that some devices have hardware firmware that is signed and
+validated when Secure Boot is enabled. Failing to validate this firmware
+could brick devices. It's recommended to enroll your own keys with
+Microsoft certificates. (From `man sbctl`)
 ```sh
 sudo sbctl enroll-keys -m
 ```
